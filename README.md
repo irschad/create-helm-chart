@@ -76,7 +76,7 @@ The project involves creating a shared Helm chart to:
   ```
 
 #### 3. Add Values Files for All Microservices
-- Extend the setup by creating individual `values.yaml` files for each remaining microservice:
+- Extend the setup by creating individual `values.yaml` files for each remaining microservice in the values folder:
   - `ad-service`
   - `cart-service`
   - `checkout-service`
@@ -85,13 +85,12 @@ The project involves creating a shared Helm chart to:
   - `payment-service`
   - `product-catalog-service`
   - `recommendation-service`
-  - `redis`
   - `shipping-service`
 - Use the naming convention `<microservice-name>-values.yaml`.
 
 #### 4. Create and Validate Helm Chart for Redis
 - Design a dedicated Helm chart for Redis.
-- In the `charts/redis` folder, configure an additional `values.yaml` file with the following contents:
+- In the `charts/redis` folder, configure the `values.yaml` file with the following contents:
   ```yaml
   appName: redis
   appImage: redis
@@ -103,6 +102,12 @@ The project involves creating a shared Helm chart to:
 
   servicePort: 6379
   ```
+- Also, create the values file for redis in the values folder with following contents:
+  ```bash
+  appName: redis-cart
+  appReplicas: 2
+  ```
+
 - Validate the Redis Helm chart templates using:
   ```bash
   helm template -f values/redis-values.yaml charts/redis
