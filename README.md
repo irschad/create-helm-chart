@@ -231,10 +231,77 @@ The project involves creating a shared Helm chart to:
   ```bash
   helm template -f values/redis-values.yaml charts/redis
   ```
-- Perform a dry-run installation:
+- Perform a dry-run of installation:
   ```bash
   helm install --dry-run -f values/redis-values.yaml rediscart charts/redis
-  ```
+  
+  NAME: rediscart
+  LAST DEPLOYED: Wed Dec 25 13:24:39 2024
+  NAMESPACE: default
+  STATUS: pending-install
+  REVISION: 1
+  TEST SUITE: None
+  HOOKS:
+  MANIFEST:
+  ---
+  # Source: redis/templates/service.yaml
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: redis-cart
+  spec:
+    type: ClusterIP
+    selector:
+      app: redis-cart
+    ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379
+  ---
+  # Source: redis/templates/deployment.yaml
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: redis-cart
+  spec:
+    replicas: 2
+    selector:
+      matchLabels:
+        app: redis-cart
+    template:
+      metadata:
+        labels:
+          app: redis-cart
+      spec:
+        containers:
+        - name: redis-cart
+          image: "redis:alpine"
+          ports:
+          - containerPort: 6379
+          livenessProbe:
+            initialDelaySeconds: 5
+            tcpSocket:
+              port: 6379
+            periodSeconds: 5
+          readinessProbe:
+            initialDelaySeconds: 5
+            tcpSocket:
+              port: 6379
+            periodSeconds: 5
+          resources:
+            requests: 
+              cpu: 70m
+              memory: 200Mi
+            limits:
+              cpu: 125m
+              memory: 300Mi
+          volumeMounts:
+          - name: redis-data
+            mountPath: /data
+        volumes:
+        - name: redis-data
+          emptyDir: {}
+        ```
 
 ## Installation and Usage
 1. Clone the repository containing the Helm chart.
