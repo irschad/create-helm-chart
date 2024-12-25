@@ -301,7 +301,8 @@ The project involves creating a shared Helm chart to:
         volumes:
         - name: redis-data
           emptyDir: {}
-        ```
+
+   ```
 
 ## Installation and Usage
 1. Clone the repository containing the Helm chart.
