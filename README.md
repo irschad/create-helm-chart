@@ -29,6 +29,8 @@ The project involves creating a shared Helm chart to:
 - Validate and lint the configuration with:
   ```bash
   helm template -f email-service-values.yaml microservice
+  ```
+  ```yaml
     ---
   # Source: microservice/templates/service.yaml
   apiVersion: v1
@@ -67,7 +69,8 @@ The project involves creating a shared Helm chart to:
           env:
           - name: PORT
             value: "8080"
-  
+  ```
+  ```bash
   helm lint -f values/email-service-values.yaml
   ==> Linting .
   [INFO] Chart.yaml: icon is recommended
@@ -103,7 +106,7 @@ The project involves creating a shared Helm chart to:
   servicePort: 6379
   ```
 - Also, create the values file for redis in the values folder with following contents:
-  ```bash
+  ```yaml
   appName: redis-cart
   appReplicas: 2
   ```
