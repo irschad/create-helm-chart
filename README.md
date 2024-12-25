@@ -29,7 +29,45 @@ The project involves creating a shared Helm chart to:
 - Validate and lint the configuration with:
   ```bash
   helm template -f email-service-values.yaml microservice
-  helm lint -f email-service-values.yaml
+    ---
+  # Source: microservice/templates/service.yaml
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: emailservice
+  spec:
+    type: ClusterIP
+    selector:
+      app: emailservice
+    ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 8080
+  ---
+  # Source: microservice/templates/deployment.yaml
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: emailservice
+  spec:
+    replicas: 2
+    selector:
+      matchLabels:
+        app: emailservice
+    template:
+      metadata:
+        labels:
+          app: emailservice
+      spec:
+        containers:
+        - name: emailservice
+          image: "gcr.io/google-samples/microservices-demo/emailservice:v0.8.0"
+          ports:
+          - containerPort: 8080
+          env:
+          - name: PORT
+            value: "8080"
+  
   helm lint -f values/email-service-values.yaml
   ==> Linting .
   [INFO] Chart.yaml: icon is recommended
@@ -80,8 +118,4 @@ The project involves creating a shared Helm chart to:
 3. Use `helm template` and `helm lint` commands to validate individual microservices.
 4. Deploy the charts to your Kubernetes cluster as needed using `helm install`.
 
-## Contributing
-Contributions are welcome! If you have suggestions for improvements, please submit a pull request or create an issue.
 
-## License
-This project is licensed under the [MIT License](LICENSE).
