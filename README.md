@@ -24,7 +24,7 @@ The project involves creating a shared Helm chart to:
   helm create redis
   ```
 #### 2. Define Deployment and Service Templates
-- Under the `charts/microservices/template` folder, define the following files:
+- Under the `charts/microservice/template` folder, define the following files:
 
   **`deployment.yaml`**:
   ```yaml
@@ -69,6 +69,7 @@ The project involves creating a shared Helm chart to:
       port: {{ .Values.servicePort }}
       targetPort: {{ .Values.containerPort }}
   ```
+- Remove all other files in the `charts/microservice/templates` directory.
 
 #### 3. Create Basic Template and Values Files
 - Start by creating a `template` file and `values.yaml` file for the `email-service` microservice.
@@ -137,7 +138,75 @@ The project involves creating a shared Helm chart to:
   - `shipping-service`
 - Use the naming convention `<microservice-name>-values.yaml`.
 
-#### 5. Create and Validate Helm Chart for Redis
+#### 5. Define Deployment and Service Templates for Redis
+- Under the `charts/redis/templates` folder, define the following files:
+
+  **`deployment.yaml`**:
+  ```yaml
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: {{ .Values.appName }}
+  spec:
+    replicas: {{ .Values.appReplicas }}
+    selector:
+      matchLabels:
+        app: {{ .Values.appName }}
+    template:
+      metadata:
+        labels:
+          app: {{ .Values.appName }}
+      spec:
+        containers:
+        - name: {{ .Values.appName }}
+          image: "{{ .Values.appImage }}:{{ .Values.appVersion }}"
+          ports:
+          - containerPort: {{ .Values.containerPort }}
+          livenessProbe:
+            initialDelaySeconds: 5
+            tcpSocket:
+              port: {{ .Values.containerPort }}
+            periodSeconds: 5
+          readinessProbe:
+            initialDelaySeconds: 5
+            tcpSocket:
+              port: {{ .Values.containerPort }}
+            periodSeconds: 5
+          resources:
+            requests: 
+              cpu: 70m
+              memory: 200Mi
+            limits:
+              cpu: 125m
+              memory: 300Mi
+          volumeMounts:
+          - name: {{ .Values.volumeName }}
+            mountPath: {{ .Values.containerMountPath }}
+        volumes:
+        - name: {{ .Values.volumeName }}
+          emptyDir: {}
+  ```
+
+  **`service.yaml`**:
+  ```yaml
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: {{ .Values.appName }}
+  spec:
+    type: ClusterIP
+    selector:
+      app: {{ .Values.appName }}
+    ports:
+    - protocol: TCP
+      port: {{ .Values.servicePort }}
+      targetPort: {{ .Values.containerPort }}
+  ```
+
+- Remove all other files in the `charts/redis/templates` directory.
+
+
+#### 6. Create and Validate Helm Chart for Redis
 - Design a dedicated Helm chart for Redis.
 - In the `charts/redis` folder, configure the `values.yaml` file with the following contents:
   ```yaml
