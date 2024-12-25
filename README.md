@@ -10,7 +10,8 @@ This project demonstrates creating a reusable Helm chart for microservices. By l
 The project involves creating a shared Helm chart to:
 1. Reuse common configurations across all microservices.
 2. Configure dynamic environment variables for each microservice.
-3. Validate and lint template and values files.
+3. Validate and lint the configuration.
+4. Perform dry run for installation on k8s cluster. 
 
 ### Key Steps
 
