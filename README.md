@@ -30,6 +30,11 @@ The project involves creating a shared Helm chart to:
   ```bash
   helm template -f email-service-values.yaml microservice
   helm lint -f email-service-values.yaml
+  helm lint -f values/email-service-values.yaml
+  ==> Linting .
+  [INFO] Chart.yaml: icon is recommended
+  
+  1 chart(s) linted, 0 chart(s) failed
   ```
 
 #### 3. Add Values Files for All Microservices
