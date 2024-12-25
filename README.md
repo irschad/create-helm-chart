@@ -48,6 +48,18 @@ The project involves creating a shared Helm chart to:
 
 #### 4. Create and Validate Helm Chart for Redis
 - Design a dedicated Helm chart for Redis.
+- In the `charts/redis` folder, configure an additional `values.yaml` file with the following contents:
+  ```yaml
+  appName: redis
+  appImage: redis
+  appVersion: alpine
+  appReplicas: 1
+  containerPort: 6379
+  volumeName: redis-data
+  containerMountPath: /data
+
+  servicePort: 6379
+  ```
 - Validate the Redis Helm chart templates using:
   ```bash
   helm template -f values/redis-values.yaml charts/redis
