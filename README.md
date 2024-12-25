@@ -23,8 +23,54 @@ The project involves creating a shared Helm chart to:
   ```bash
   helm create redis
   ```
+#### 2. Define Deployment and Service Templates
+- Under the `charts/microservices/template` folder, define the following files:
 
-#### 2. Create Basic Template and Values Files
+  **`deployment.yaml`**:
+  ```yaml
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: {{ .Values.appName }}
+  spec:
+    replicas: {{ .Values.appReplicas }}
+    selector:
+      matchLabels:
+        app: {{ .Values.appName }}
+    template:
+      metadata:
+        labels:
+          app: {{ .Values.appName }}
+      spec:
+        containers:
+        - name: {{ .Values.appName }}
+          image: "{{ .Values.appImage }}:{{ .Values.appVersion }}"
+          ports:
+          - containerPort: {{ .Values.containerPort }}
+          env:
+          {{- range .Values.containerEnvVars}}
+          - name: {{ .name }}
+            value: {{ .value | quote }}
+          {{- end}}
+  ```
+
+  **`service.yaml`**:
+  ```yaml
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: {{ .Values.appName }}
+  spec:
+    type: {{ .Values.serviceType }}
+    selector:
+      app: {{ .Values.appName }}
+    ports:
+    - protocol: TCP
+      port: {{ .Values.servicePort }}
+      targetPort: {{ .Values.containerPort }}
+  ```
+
+#### 3. Create Basic Template and Values Files
 - Start by creating a `template` file and `values.yaml` file for the `email-service` microservice.
 - Validate and lint the configuration with:
   ```bash
@@ -78,7 +124,7 @@ The project involves creating a shared Helm chart to:
   1 chart(s) linted, 0 chart(s) failed
   ```
 
-#### 3. Add Values Files for All Microservices
+#### 4. Add Values Files for All Microservices
 - Extend the setup by creating individual `values.yaml` files for each remaining microservice in the values folder:
   - `ad-service`
   - `cart-service`
@@ -91,7 +137,7 @@ The project involves creating a shared Helm chart to:
   - `shipping-service`
 - Use the naming convention `<microservice-name>-values.yaml`.
 
-#### 4. Create and Validate Helm Chart for Redis
+#### 5. Create and Validate Helm Chart for Redis
 - Design a dedicated Helm chart for Redis.
 - In the `charts/redis` folder, configure the `values.yaml` file with the following contents:
   ```yaml
